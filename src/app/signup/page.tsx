@@ -11,8 +11,8 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSubmit(ev: React.FormEvent) {
+    ev.preventDefault();
     setError("");
     setLoading(true);
     try {
@@ -21,15 +21,21 @@ export default function SignupPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const data = await res.json();
+      let data: { error?: string } = {};
+      try {
+        data = await res.json();
+      } catch {
+        setError(res.ok ? "Invalid response" : "Sign up failed. Try again.");
+        return;
+      }
       if (!res.ok) {
         setError(data.error || "Sign up failed");
         return;
       }
       router.push("/dashboard");
       router.refresh();
-    } catch {
-      setError("Something went wrong");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
     }

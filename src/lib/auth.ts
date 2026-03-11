@@ -36,6 +36,12 @@ export function getSessionCookie(userId: string): { name: string; value: string;
   return {
     name: COOKIE_NAME,
     value: createSession(userId),
-    options: { httpOnly: true, path: "/", maxAge: 60 * 60 * 24 * 7, sameSite: "lax" },
+    options: {
+      httpOnly: true,
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+      sameSite: "lax" as const,
+      secure: process.env.NODE_ENV === "production",
+    },
   };
 }

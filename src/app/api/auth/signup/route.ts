@@ -28,7 +28,11 @@ export async function POST(req: Request) {
     res.cookies.set(cookie.name, cookie.value, cookie.options as Record<string, string | number | boolean>);
     return res;
   } catch (e) {
+    const message = e instanceof Error ? e.message : "Sign up failed";
     console.error("Signup error:", e);
+    if (message === "Database not configured") {
+      return NextResponse.json({ error: "Server misconfigured" }, { status: 503 });
+    }
     return NextResponse.json({ error: "Sign up failed" }, { status: 500 });
   }
 }

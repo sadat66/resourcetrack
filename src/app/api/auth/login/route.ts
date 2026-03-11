@@ -6,8 +6,10 @@ import { getSessionCookie } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
-    if (!email?.trim() || !password?.trim()) {
+    const body = await req.json().catch(() => ({}));
+    const email = typeof body?.email === "string" ? body.email : "";
+    const password = typeof body?.password === "string" ? body.password : "";
+    if (!email.trim() || !password.trim()) {
       return NextResponse.json({ error: "Email and password required" }, { status: 400 });
     }
     await connectDB();
@@ -20,7 +22,11 @@ export async function POST(req: Request) {
     res.cookies.set(cookie.name, cookie.value, cookie.options as Record<string, string | number | boolean>);
     return res;
   } catch (e) {
+    const message = e instanceof Error ? e.message : "Login failed";
     console.error("Login error:", e);
+    if (message === "Database not configured") {
+      return NextResponse.json({ error: "Server misconfigured" }, { status: 503 });
+    }
     return NextResponse.json({ error: "Login failed" }, { status: 500 });
   }
 }

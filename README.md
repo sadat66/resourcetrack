@@ -19,6 +19,16 @@ Minimal web dev progress tracker: add YouTube videos and links, check them off, 
 - **Check off** – Mark items done; toggle or remove anytime.
 - **Protected** – Dashboard requires login; session cookie keeps you signed in.
 
+## Deploy to Vercel
+
+1. In **Vercel** → your project → **Settings** → **Environment Variables**, add:
+   - `MONGODB_URI` – your MongoDB Atlas connection string
+   - `NEXTAUTH_SECRET` – a long random string (e.g. `openssl rand -base64 32`)
+
+2. In **MongoDB Atlas** → **Network Access** → **Add IP Address** → **Allow Access from Anywhere** (`0.0.0.0/0`) so Vercel’s servers can connect.
+
+3. Redeploy the project after saving env vars.
+
 ## Tech
 
 - Next.js 14 (App Router), TypeScript, Tailwind
